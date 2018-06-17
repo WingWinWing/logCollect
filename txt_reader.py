@@ -1,10 +1,14 @@
+#coding: utf-8
 import warnings
 import re
 import pandas as pd
 import sys
 import numpy as np
 
-input_file_path = '/Users/robert/Documents/doc/problemData/12_android_output/18_grep_cqd.txt'
+#input_file_path = '/Users/robert/Documents/doc/problemData/12_android_output/18_grep_cqd.txt'
+input_file_path = '/Users/robert/Documents/doc/problemData/19_export_picture_to_video/19_grep_cqd.txt'
+
+
 
 
 class TxtReader(object):
@@ -18,13 +22,15 @@ class TxtReader(object):
         split_comma_list = line.split(',')
         for item in split_comma_list:
             if 'pts =' in item:
+                item = item.replace('.', '')
+              #  print(item)
                 return int(item.split('pts =')[-1])
             else:
                 continue
         return None
 
     def _get_cqd(self, line):
-        split_comma_list = re.split(r"\,|\ ", line)
+        split_comma_list = re.split(r"\,|\ ", line) #将字符串以"," 或 “空格” 分割;
         for item in split_comma_list:
             if 'CQD' in item:
                 return item
@@ -40,6 +46,11 @@ class TxtReader(object):
         return ms_time
 
     def _time_transform(self, time):
+        """
+        将 hh:min:sec.mirsec 转换成 min * 60 * 1000 + sec * 1000 + mirsec;
+        :param time:
+        :return:
+        """
         assert isinstance(time, str)
         time_split = re.split(r"\:|\.", time)
         time_multiple = [60 * 1000, 1000, 1]
@@ -51,11 +62,16 @@ class TxtReader(object):
         return ms_time
 
     def _gen_result(self):
+        """
+
+        :return:
+        """
         pts_result = {}
         for i, line in enumerate(self.f.readlines()):
-            pts = self._get_pts(line)
-            cqd = self._get_cqd(line)
-            time = self._get_time(line)
+            pts = self._get_pts(line)   # 获取 pts = 后面的值;
+            cqd = self._get_cqd(line)   # 获取 以 "," 或 “空格”分割后的字符串的，包含有 “CQD” 的字符串;
+            time = self._get_time(line) # 获取当前行中时间戳，转换成 ms 为单位;
+
             if cqd is None:
                 warnings.warn("line {} {} cqd is None.".format(i, line))
                 continue
@@ -93,7 +109,7 @@ class TxtReader(object):
         assert output_path.endswith('.xls')
         upper_limit = 20000
         pts_result = self._gen_result()
-        cqd_list = ['CQD.3', 'CQD.4', 'CQD.5.1', 'CQD.5.2.x', 'CQD.5.2', 'CQD.5.3', 'CQD.5.4.x', 'CQD.5.4']#self._get_all_cqd_from_results(pts_result)
+        cqd_list = ['CQD.1', 'CQD.2', 'CQD.3', 'CQD.4', 'CQD.5.1', 'CQD.5.2.x', 'CQD.5.2', 'CQD.5.3', 'CQD.5.4.x', 'CQD.5.4', 'CQD.6', 'CQD.7']#self._get_all_cqd_from_results(pts_result)
         items = pts_result.items()
         items.sort()
         head = ['pts'] + cqd_list
@@ -102,10 +118,11 @@ class TxtReader(object):
             cqd_item_count_dict = self._init_cqd_count(cqd_list)
             pts_df = pd.DataFrame([[np.nan] * len(head)] * upper_limit, columns=head)
             line_index = 0
-            for ind in range(len(v) / 2):
+            for ind in range(len(v) / 2):   # cqd.question.1 v 中的内容，偶数表示 key, 奇数表示 value;
                 item = v[ind * 2]
                 max_count = max(cqd_item_count_dict.values())
-                cqd_item_count_dict[item] += 1
+
+                cqd_item_count_dict[item] += 1  # items 中出现了 CQD.6, 但是 cqd_item_count_dict 中未出现该 key， 故崩溃;
                 if cqd_item_count_dict[item] > max_count > 0:
                     line_index += 1
                 pts_df.iloc[line_index, 0] = k
