@@ -8,7 +8,7 @@ class Analysis(object):
     def __init__(self, xls_path):
         self.df = pd.read_excel(xls_path)
         """
-        self.add_index = ['gap_cqd.3', 'gap_cqd.4', 'dur_cqd.3_4', 'gap_cqd.5.1', 'gap_cqd.5.4', 'dur_cqd.4_5.1']
+        self.add_index = ['gap_cqd.3', 'gap_cqd.4', 'dur_cqd.3_4', 'gap_cqd.5.1', 'gap_cqd.5.4', 'dur_cqd.4_5.1','dur_cqd_3_1']
         gap_cqd.3 :  表示前后相邻两帧, cqd.3 位置处的时间戳的差值, 表示 RenderEngine 接收数据的时间间隔;
         gap_cqd.4 :  表示前后相邻两帧, cqd.4 位置处的时间戳的差值，表示 RenderEngine 发送数据的时间间隔;
         dur_cqd.3_4: 表示同一帧 cqd.4 - cqd.3， 表示 RenderEngine 接收一帧到 发送渲染后帧至Encoder 的时间间隔;
@@ -18,9 +18,9 @@ class Analysis(object):
         
         
         """
-        self.add_index = ['gap_cqd.3', 'gap_cqd.4', 'dur_cqd.3_4', 'gap_cqd.5.1', 'gap_cqd.5.4', 'dur_cqd.4_5']#['gap_cqd.3', 'dur_cqd.3_4', 'gap_cqd.5.1', 'gap_cqd.5.4']
+        self.add_index = ['gap_cqd.3', 'gap_cqd.4', 'dur_cqd.3_4', 'gap_cqd.5.1', 'gap_cqd.5.4', 'dur_cqd.4_5','dur_cqd_3_1']
 
-        self.case_dict_keys = ['cqd_3', 'cqd_4', 'cqd_5_1_first', 'cqd_5_1_last', 'cqd_5_4']
+        self.case_dict_keys = ['cqd_3', 'cqd_4', 'cqd_5_1_first', 'cqd_5_1_last', 'cqd_5_4','cqd_1']
         # self.case_dict_keys = []
 
         self.first_index = 'pts'
@@ -133,11 +133,13 @@ class Analysis(object):
         # case_dict[self._gen_case_dict_keys(1, index)] = self._get_cqd_last(case_df, index)
 
         # cqd.note.2 此处添加 CQD.1, CQD.2,CQD.6,CQD.7 相关的内容;
+
         case_dict[self.case_dict_keys[0]] = self._get_cqd_first(case_df, 'CQD.3')
         case_dict[self.case_dict_keys[1]] = self._get_cqd_first(case_df, 'CQD.4')
         case_dict[self.case_dict_keys[2]] = self._get_cqd_first(case_df, 'CQD.5.1')
         case_dict[self.case_dict_keys[3]] = self._get_cqd_last(case_df, 'CQD.5.1')
         case_dict[self.case_dict_keys[4]] = self._get_cqd_last(case_df, 'CQD.5.4')
+        case_dict[self.case_dict_keys[5]] = self._get_cqd_first(case_df, 'CQD.1')
         return case_dict
 
     @staticmethod
@@ -155,7 +157,11 @@ class Analysis(object):
         diff_cqd_5_4 = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys[4], self.case_dict_keys[4], int)
         dur_4_3 = self._diff(case_dict_current, case_dict_current, self.case_dict_keys[0], self.case_dict_keys[1], int)
         dur_51_4 = self._diff(case_dict_current, case_dict_current, self.case_dict_keys[1], self.case_dict_keys[2], int)
-        diff_list = [diff_cqd_3, diff_cqd_4, dur_4_3, diff_cqd_5_1, diff_cqd_5_4, dur_51_4]
+
+
+        dur_3_1 = self._diff(case_dict_current, case_dict_current, self.case_dict_keys[5], self.case_dict_keys[0], int)
+
+        diff_list = [diff_cqd_3, diff_cqd_4, dur_4_3, diff_cqd_5_1, diff_cqd_5_4, dur_51_4, dur_3_1]
         assert len(diff_list) == len(self.add_index)
         return diff_list
 
