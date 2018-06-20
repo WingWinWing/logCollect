@@ -6,7 +6,7 @@ import sys
 import numpy as np
 
 #input_file_path = '/Users/robert/Documents/doc/problemData/12_android_output/18_grep_cqd.txt'
-input_file_path = '/Users/robert/Documents/doc/problemData/19_export_picture_to_video/19_grep_cqd.txt'
+input_file_path = '/Users/robert/Documents/doc/problemData/19_export_picture_to_video/24_grep_cqd.txt'
 
 
 
@@ -109,7 +109,7 @@ class TxtReader(object):
         assert output_path.endswith('.xls')
         upper_limit = 20000
         pts_result = self._gen_result()
-        cqd_list = ['CQD.1', 'CQD.2', 'CQD.3', 'CQD.4', 'CQD.5.1', 'CQD.5.2.x', 'CQD.5.2', 'CQD.5.3', 'CQD.5.4.x', 'CQD.5.4', 'CQD.6', 'CQD.7']#self._get_all_cqd_from_results(pts_result)
+        cqd_list = ['CQD.1', 'CQD.2', 'CQD.3','CQD.4.0', 'CQD.4.1', 'CQD.5.1', 'CQD.5.2.x', 'CQD.5.2', 'CQD.5.3', 'CQD.5.4.x', 'CQD.5.4', 'CQD.6', 'CQD.7']
         items = pts_result.items()
         items.sort()
         head = ['pts'] + cqd_list

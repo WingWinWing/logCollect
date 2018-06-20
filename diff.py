@@ -4,6 +4,73 @@ import numpy as np
 import os
 
 
+class AddIndex(object):
+    def __init__(self):
+        self.gap_cqd_3 = 'gap_cqd.3'
+        self.dur_cqd_1_3 = 'dur_cqd_1_3'
+        self.dur_cqd_3_4_1 = 'dur_cqd.3_4.1'
+        self.gap_cqd_4_1 = 'gap_cqd.4.1'
+
+        # self.gap_cqd_5_1 = 'gap_cqd.5.1'
+        self.dur_cqd_40_41 = 'dur_cqd_4.0_4.1'
+        self.dur_cqd_4_5 = 'dur_cqd.4_5'
+        self.gap_cqd_5_4 = 'gap_cqd.5.4'
+
+        self.dur_cqd_54_6 = 'dur_cqd.5.4_6'
+        self.dur_cqd_6_7 = 'dur_cqd.6_7'
+
+
+
+    def tolist(self):
+        return [self.gap_cqd_3,
+                self.dur_cqd_1_3,
+                self.dur_cqd_3_4_1,
+                self.gap_cqd_4_1,
+                self.dur_cqd_40_41,
+                self.dur_cqd_4_5,
+                self.gap_cqd_5_4,
+                self.dur_cqd_54_6,
+                self.dur_cqd_6_7
+                ]
+
+    def _check(self, index_list):
+        temp_list = []
+        for item in index_list:
+            if item in temp_list:
+                return False
+            else:
+                if item not in self.__dict__.values():
+                    return False
+                else:
+                    temp_list.append(item)
+        return True
+
+    def __len__(self):
+        return len(self.tolist())
+
+    def get_values_from_dict(self, input_dict):
+        values = []
+        for k in self.tolist():
+            assert k in input_dict.keys()
+            values.append(input_dict[k])
+        return values
+
+
+
+class CaseDictKeys(object):
+    def __init__(self):
+        self.cqd_1 = 'cqd_1'
+        self.cqd_3 = 'cqd_3'
+        self.cqd_4_0 = 'cqd_4_0'
+        self.cqd_4_1 = 'cqd_4_1'
+        self.cqd_5_1_first = 'cqd_5_1_first'
+        self.cqd_5_1_last = 'cqd_5_1_last'
+        self.cqd_5_4 = 'cqd_5_4'
+        self.cqd_6 = 'cqd_6'
+        self.cqd_7 = 'cqd_7'
+
+
+
 class Analysis(object):
     def __init__(self, xls_path):
         self.df = pd.read_excel(xls_path)
@@ -18,15 +85,22 @@ class Analysis(object):
         
         
         """
-        self.add_index = ['gap_cqd.3', 'gap_cqd.4', 'dur_cqd.3_4', 'gap_cqd.5.1', 'gap_cqd.5.4', 'dur_cqd.4_5','dur_cqd_3_1']
-
-        self.case_dict_keys = ['cqd_3', 'cqd_4', 'cqd_5_1_first', 'cqd_5_1_last', 'cqd_5_4','cqd_1']
-        # self.case_dict_keys = []
+        self.add_index = AddIndex()
+        self.case_dict_keys = CaseDictKeys()
 
         self.first_index = 'pts'
 
         # list 乘标量表示将list 扩展;
-        self.add_df = pd.DataFrame([[np.nan] * len(self.add_index)] * len(self.df), columns=self.add_index) # 根据源 excel 文件的行数，及要添加的列数，分配空间;
+        self.add_df = pd.DataFrame([[np.nan] * len(self.add_index)] * len(self.df),
+                                   columns=self.add_index_list)  # 根据源 excel 文件的行数，及要添加的列数，分配空间;
+
+    @property
+    def add_index_list(self):
+        return self.add_index.tolist()
+
+    # @property
+    # def case_dict_keys_list(self):
+    #     return self.case_dict_keys.tolist()
 
     @staticmethod
     def add_parameters(params, **kwargs):
@@ -56,7 +130,7 @@ class Analysis(object):
         :param index:   列号
         :return:        返回 case_df 表格中"第0行,index 列"的值;
         """
-        return case_df.loc[case_df.index[0], index] # 取出 case_df 第0行, 列号为 index 的单元的值;
+        return case_df.loc[case_df.index[0], index]  # 取出 case_df 第0行, 列号为 index 的单元的值;
 
     @staticmethod
     def _get_cqd_last(case_df, index):
@@ -87,59 +161,29 @@ class Analysis(object):
         else:
             raise ValueError("Input must be 0 or 1.")
 
-    def _gen_case_dict_keys(self):
-        func_index_list = [['CQD.3', self._get_cqd_first], ['CQD.4', self._get_cqd_first],
-                           ['CQD.5.1', self._get_cqd_first], ['CQD.5.1', self._get_cqd_last],
-                           ['CQD.5.4', self._get_cqd_last]]
-        for index, func in func_index_list:
-            key = self._gen_case_dict_key_single(func, index)
-            assert key not in self.case_dict_keys
-            self.case_dict_keys.append(key)
+    # def _gen_case_dict_keys(self):  # cqd.question.1 此处需要进一步理解下;
+    #     func_index_list = [['CQD.3', self._get_cqd_first], ['CQD.4', self._get_cqd_first],
+    #                        ['CQD.5.1', self._get_cqd_first], ['CQD.5.1', self._get_cqd_last],
+    #                        ['CQD.5.4', self._get_cqd_last]]
+    #     for index, func in func_index_list:
+    #         key = self._gen_case_dict_key_single(func, index)
+    #         assert key not in self.case_dict_keys
+    #         self.case_dict_keys.append(key)
 
     def _get_case_dict(self, case_df):
         case_dict = dict()
-        # assert self.case_dict_keys
-        # for key in self.case_dict_keys:
-        #     case_dict[key] = func(case_df, index)
 
-        # index = 'CQD.3'
-        # key = self._gen_case_dict_keys(0, index)
-        # assert key not in self.case_dict_keys
-        # self.case_dict_keys.append(key)
-        # case_dict[key] = self._get_cqd_first(case_df, index)
-        #
-        # index = 'CQD.4'
-        # key = self._gen_case_dict_keys(0, index)
-        # assert key not in self.case_dict_keys
-        # self.case_dict_keys.append(key)
-        # case_dict[key] = self._get_cqd_first(case_df, index)
-        #
-        # index = 'CQD.5.1'
-        # key = self._gen_case_dict_keys(0, index)
-        # assert key not in self.case_dict_keys
-        # self.case_dict_keys.append(key)
-        # case_dict[key] = self._get_cqd_first(case_df, index)
-        #
-        # index = 'CQD.5.1'
-        # key = self._gen_case_dict_keys(1, index)
-        # assert key not in self.case_dict_keys
-        # self.case_dict_keys.append(key)
-        # case_dict[key] = self._get_cqd_last(case_df, index)
-        #
-        # index = 'CQD.5.4'
-        # key = self._gen_case_dict_keys(1, index)
-        # assert key not in self.case_dict_keys
-        # self.case_dict_keys.append(key)
-        # case_dict[self._gen_case_dict_keys(1, index)] = self._get_cqd_last(case_df, index)
+        case_dict[self.case_dict_keys.cqd_1] = self._get_cqd_first(case_df, 'CQD.1')
+        case_dict[self.case_dict_keys.cqd_3] = self._get_cqd_first(case_df, 'CQD.3')
+        case_dict[self.case_dict_keys.cqd_4_0] = self._get_cqd_first(case_df, 'CQD.4.0')
+        case_dict[self.case_dict_keys.cqd_4_1] = self._get_cqd_first(case_df, 'CQD.4.1')
+        case_dict[self.case_dict_keys.cqd_5_1_first] = self._get_cqd_first(case_df, 'CQD.5.1')
+        case_dict[self.case_dict_keys.cqd_5_1_last] = self._get_cqd_last(case_df, 'CQD.5.1')
+        case_dict[self.case_dict_keys.cqd_5_4] = self._get_cqd_last(case_df, 'CQD.5.4')
 
-        # cqd.note.2 此处添加 CQD.1, CQD.2,CQD.6,CQD.7 相关的内容;
+        case_dict[self.case_dict_keys.cqd_6] = self._get_cqd_first(case_df, 'CQD.6')
+        case_dict[self.case_dict_keys.cqd_7] = self._get_cqd_first(case_df, 'CQD.7')
 
-        case_dict[self.case_dict_keys[0]] = self._get_cqd_first(case_df, 'CQD.3')
-        case_dict[self.case_dict_keys[1]] = self._get_cqd_first(case_df, 'CQD.4')
-        case_dict[self.case_dict_keys[2]] = self._get_cqd_first(case_df, 'CQD.5.1')
-        case_dict[self.case_dict_keys[3]] = self._get_cqd_last(case_df, 'CQD.5.1')
-        case_dict[self.case_dict_keys[4]] = self._get_cqd_last(case_df, 'CQD.5.4')
-        case_dict[self.case_dict_keys[5]] = self._get_cqd_first(case_df, 'CQD.1')
         return case_dict
 
     @staticmethod
@@ -150,31 +194,40 @@ class Analysis(object):
             return dtype_func(case_dict_current[index_current]) - dtype_func(case_dict_pre[index_pre])
 
     def _diff_items(self, case_dict_pre, case_dict_current):
-  #      dur_3_1 = ;    # cqd.note.1 此处添加 关于 cqd.3 - cqd.1 的值, 同时添加至新增列中;
-        diff_cqd_3 = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys[0], self.case_dict_keys[0], int)
-        diff_cqd_4 = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys[1], self.case_dict_keys[1], int)
-        diff_cqd_5_1 = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys[2], self.case_dict_keys[3], int)
-        diff_cqd_5_4 = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys[4], self.case_dict_keys[4], int)
-        dur_4_3 = self._diff(case_dict_current, case_dict_current, self.case_dict_keys[0], self.case_dict_keys[1], int)
-        dur_51_4 = self._diff(case_dict_current, case_dict_current, self.case_dict_keys[1], self.case_dict_keys[2], int)
+
+        diff_dict = dict()
+        diff_dict[self.add_index.dur_cqd_1_3] = self._diff(case_dict_current, case_dict_current,self.case_dict_keys.cqd_1, self.case_dict_keys.cqd_3, int)
+        diff_dict[self.add_index.gap_cqd_3] = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys.cqd_3, self.case_dict_keys.cqd_3, int)
+        diff_dict[self.add_index.gap_cqd_4_1] = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys.cqd_4_1, self.case_dict_keys.cqd_4_1, int)
+
+        diff_dict[self.add_index.dur_cqd_40_41] = self._diff(case_dict_current, case_dict_current,
+                                                           self.case_dict_keys.cqd_4_0, self.case_dict_keys.cqd_4_1,
+                                                           int)
+        # diff_dict[self.add_index.gap_cqd_5_1] = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys.cqd_5_1_first, self.case_dict_keys.cqd_5_1_last, int)
+        diff_dict[self.add_index.gap_cqd_5_4] = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys.cqd_5_4, self.case_dict_keys.cqd_5_4, int)
+        diff_dict[self.add_index.dur_cqd_3_4_1] = self._diff(case_dict_current, case_dict_current, self.case_dict_keys.cqd_3, self.case_dict_keys.cqd_4_1, int)
+        diff_dict[self.add_index.dur_cqd_4_5] = self._diff(case_dict_current, case_dict_current, self.case_dict_keys.cqd_4_1, self.case_dict_keys.cqd_5_1_first, int)
+
+        diff_dict[self.add_index.dur_cqd_54_6] = self._diff(case_dict_current, case_dict_current,
+                                                             self.case_dict_keys.cqd_5_4, self.case_dict_keys.cqd_6,
+                                                             int)
+        diff_dict[self.add_index.dur_cqd_6_7] = self._diff(case_dict_current, case_dict_current,
+                                                           self.case_dict_keys.cqd_6,
+                                                           self.case_dict_keys.cqd_7, int)
 
 
-        dur_3_1 = self._diff(case_dict_current, case_dict_current, self.case_dict_keys[5], self.case_dict_keys[0], int)
+        return diff_dict
 
-        diff_list = [diff_cqd_3, diff_cqd_4, dur_4_3, diff_cqd_5_1, diff_cqd_5_4, dur_51_4, dur_3_1]
-        assert len(diff_list) == len(self.add_index)
-        return diff_list
-
-    def _get_adding_colums(self):   # 将要计算的结果存于 self.add_df 中;
-        for index, case_df in enumerate(self._case_generator()):    # 每次取出源表格中某个相同的 pts 的所有行;最终会遍历所有的不同的pts的行;
+    def _get_adding_colums(self):  # 将要计算的结果存于 self.add_df 中;
+        for index, case_df in enumerate(self._case_generator()):  # 每次取出源表格中某个相同的 pts 的所有行;最终会遍历所有的不同的pts的行;
             if index == 0:
                 continue
             if index == 1:
-                case_dict_pre = self._get_case_dict(case_df) # case_df 存储的是 pts 值相同的所有行构成的表格;
+                case_dict_pre = self._get_case_dict(case_df)  # case_df 存储的是 pts 值相同的所有行构成的表格;
                 continue
             case_dict_current = self._get_case_dict(case_df)
-            diff_list = self._diff_items(case_dict_pre, case_dict_current)
-            self.add_df.loc[self._get_last_index(case_df)] = diff_list
+            diff_dict = self._diff_items(case_dict_pre, case_dict_current)
+            self.add_df.loc[self._get_last_index(case_df)] = self.add_index.get_values_from_dict(diff_dict)
             case_dict_pre = case_dict_current
 
     def add_columns(self):
@@ -184,8 +237,8 @@ class Analysis(object):
 
 
 def test():
-    xls_path = '/Users/robert/Documents/doc/problemData/19_export_picture_to_video/21_grep_cqd.xls'
-    out_path = os.path.join(os.path.dirname(xls_path), os.path.basename(xls_path).split('.')[0] + '_add_dff_copy.xls')
+    xls_path = '/Users/robert/Documents/doc/problemData/19_export_picture_to_video/24_grep_cqd.xls'
+    out_path = os.path.join(os.path.dirname(xls_path), os.path.basename(xls_path).split('.')[0] + '_add_dff.xls')
     analysis = Analysis(xls_path)
     out_df = analysis.add_columns()
     out_df.to_excel(out_path, header=True, index=False)
