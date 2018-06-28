@@ -3,34 +3,62 @@ import pandas as pd
 import numpy as np
 import os
 
+#xls_path = '/Users/robert/Documents/doc/problemData/20_pipeline/ios/1_grep_cqd.xls'
+xls_path = '/Users/robert/Documents/doc/problemData/20_pipeline/android/8_grep_pipeline.xls'
+
+
 
 class AddIndex(object):
     def __init__(self):
-        self.gap_cqd_3 = 'gap_cqd.3'
+        self.gap_cqd_1 = 'gap_cqd_1'
         self.dur_cqd_1_3 = 'dur_cqd_1_3'
-        self.dur_cqd_3_4_1 = 'dur_cqd.3_4.1'
-        self.gap_cqd_4_1 = 'gap_cqd.4.1'
+        self.dur_cqd_1_2 = 'dur_cqd_1_2'
 
-        # self.gap_cqd_5_1 = 'gap_cqd.5.1'
-        self.dur_cqd_40_41 = 'dur_cqd_4.0_4.1'
-        self.dur_cqd_4_5 = 'dur_cqd.4_5'
-        self.gap_cqd_5_4 = 'gap_cqd.5.4'
+        # RenderEngne
+        self.gap_cqd_3 = 'gap_cqd.3'
+        self.dur_cqd_3_31 = 'dur_cqd.3_3.1'
 
-        self.dur_cqd_54_6 = 'dur_cqd.5.4_6'
-        self.dur_cqd_6_7 = 'dur_cqd.6_7'
+        self.dur_cqd_31_34 = 'dur_cqd_3.1_3.4'
+        self.dur_cqd_32_33 = 'dur_cqd_3.2_3.3'
+        self.dur_cqd_1_34 = 'dur_cqd_1_3.4'
+        self.dur_cqd_1_4 = 'dur_cqd_1_4'
+        self.dur_cqd_3_4 = 'dur_cqd_3_4'
+        self.gap_cqd_4 = 'gap_cqd_4'
+
+        # Encoder
+        self.gap_cqd_5 = 'gap_cqd_5'
+        self.dur_cqd_51_52 = 'dur_cqd.5.1_5.2'
+        self.gap_cqd_5_3 = 'gap_cqd.5.3'
+        self.gap_cqd_6 = 'gap_cqd_6'
+
+        # Muxer
+        self.gap_cqd_7 = 'gap_cqd_7'
 
 
 
     def tolist(self):
-        return [self.gap_cqd_3,
+        return [self.gap_cqd_1,
                 self.dur_cqd_1_3,
-                self.dur_cqd_3_4_1,
-                self.gap_cqd_4_1,
-                self.dur_cqd_40_41,
-                self.dur_cqd_4_5,
-                self.gap_cqd_5_4,
-                self.dur_cqd_54_6,
-                self.dur_cqd_6_7
+                self.dur_cqd_1_2,
+
+                # RenderEngne
+                self.dur_cqd_3_31,
+                self.dur_cqd_31_34,
+                self.dur_cqd_32_33,
+                self.dur_cqd_1_34,
+                self.dur_cqd_1_4,
+                self.dur_cqd_3_4,
+                self.gap_cqd_3,
+                self.gap_cqd_4,
+
+                # Encoder
+                self.gap_cqd_5,
+                self.dur_cqd_51_52,
+                self.gap_cqd_5_3,
+                self.gap_cqd_6,
+
+                # Muxer
+                self.gap_cqd_7
                 ]
 
     def _check(self, index_list):
@@ -60,12 +88,19 @@ class AddIndex(object):
 class CaseDictKeys(object):
     def __init__(self):
         self.cqd_1 = 'cqd_1'
+        self.cqd_2 = 'cqd_2'
+        self.cqd_2_1 = 'cqd_2_1'
+        self.cqd_2_2 = 'cqd_2_2'
         self.cqd_3 = 'cqd_3'
-        self.cqd_4_0 = 'cqd_4_0'
-        self.cqd_4_1 = 'cqd_4_1'
+        self.cqd_3_1 = 'cqd_3_1'
+        self.cqd_3_2 = 'cqd_3_2'
+        self.cqd_3_3 = 'cqd_3_3'
+        self.cqd_3_4 = 'cqd_3_4'
+        self.cqd_4 = 'cqd_4'
+        self.cqd_5 = 'cqd_5'
         self.cqd_5_1_first = 'cqd_5_1_first'
-        self.cqd_5_1_last = 'cqd_5_1_last'
-        self.cqd_5_4 = 'cqd_5_4'
+        self.cqd_5_2 = 'cqd_5_2'
+        self.cqd_5_3 = 'cqd_5_3'
         self.cqd_6 = 'cqd_6'
         self.cqd_7 = 'cqd_7'
 
@@ -174,12 +209,23 @@ class Analysis(object):
         case_dict = dict()
 
         case_dict[self.case_dict_keys.cqd_1] = self._get_cqd_first(case_df, 'CQD.1')
+        case_dict[self.case_dict_keys.cqd_2] = self._get_cqd_first(case_df, 'CQD.2')
+        case_dict[self.case_dict_keys.cqd_2_1] = self._get_cqd_first(case_df, 'CQD.2.1')
+        case_dict[self.case_dict_keys.cqd_2_2] = self._get_cqd_first(case_df, 'CQD.2.2')
+
         case_dict[self.case_dict_keys.cqd_3] = self._get_cqd_first(case_df, 'CQD.3')
-        case_dict[self.case_dict_keys.cqd_4_0] = self._get_cqd_first(case_df, 'CQD.4.0')
-        case_dict[self.case_dict_keys.cqd_4_1] = self._get_cqd_first(case_df, 'CQD.4.1')
+
+        case_dict[self.case_dict_keys.cqd_3_1] = self._get_cqd_first(case_df, 'CQD.3.1')
+        case_dict[self.case_dict_keys.cqd_3_2] = self._get_cqd_first(case_df, 'CQD.3.2')
+        case_dict[self.case_dict_keys.cqd_3_3] = self._get_cqd_first(case_df, 'CQD.3.3')
+        case_dict[self.case_dict_keys.cqd_3_4] = self._get_cqd_first(case_df, 'CQD.3.4')
+
+        case_dict[self.case_dict_keys.cqd_4] = self._get_cqd_first(case_df, 'CQD.4')
+        case_dict[self.case_dict_keys.cqd_5] = self._get_cqd_first(case_df, 'CQD.5')
+
         case_dict[self.case_dict_keys.cqd_5_1_first] = self._get_cqd_first(case_df, 'CQD.5.1')
-        case_dict[self.case_dict_keys.cqd_5_1_last] = self._get_cqd_last(case_df, 'CQD.5.1')
-        case_dict[self.case_dict_keys.cqd_5_4] = self._get_cqd_last(case_df, 'CQD.5.4')
+        case_dict[self.case_dict_keys.cqd_5_2] = self._get_cqd_first(case_df, 'CQD.5.2')
+        case_dict[self.case_dict_keys.cqd_5_3] = self._get_cqd_first(case_df, 'CQD.5.3')
 
         case_dict[self.case_dict_keys.cqd_6] = self._get_cqd_first(case_df, 'CQD.6')
         case_dict[self.case_dict_keys.cqd_7] = self._get_cqd_first(case_df, 'CQD.7')
@@ -194,27 +240,67 @@ class Analysis(object):
             return dtype_func(case_dict_current[index_current]) - dtype_func(case_dict_pre[index_pre])
 
     def _diff_items(self, case_dict_pre, case_dict_current):
-
         diff_dict = dict()
+        diff_dict[self.add_index.gap_cqd_1] = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys.cqd_1,
+                                                         self.case_dict_keys.cqd_1, int)
+
         diff_dict[self.add_index.dur_cqd_1_3] = self._diff(case_dict_current, case_dict_current,self.case_dict_keys.cqd_1, self.case_dict_keys.cqd_3, int)
-        diff_dict[self.add_index.gap_cqd_3] = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys.cqd_3, self.case_dict_keys.cqd_3, int)
-        diff_dict[self.add_index.gap_cqd_4_1] = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys.cqd_4_1, self.case_dict_keys.cqd_4_1, int)
 
-        diff_dict[self.add_index.dur_cqd_40_41] = self._diff(case_dict_current, case_dict_current,
-                                                           self.case_dict_keys.cqd_4_0, self.case_dict_keys.cqd_4_1,
-                                                           int)
-        # diff_dict[self.add_index.gap_cqd_5_1] = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys.cqd_5_1_first, self.case_dict_keys.cqd_5_1_last, int)
-        diff_dict[self.add_index.gap_cqd_5_4] = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys.cqd_5_4, self.case_dict_keys.cqd_5_4, int)
-        diff_dict[self.add_index.dur_cqd_3_4_1] = self._diff(case_dict_current, case_dict_current, self.case_dict_keys.cqd_3, self.case_dict_keys.cqd_4_1, int)
-        diff_dict[self.add_index.dur_cqd_4_5] = self._diff(case_dict_current, case_dict_current, self.case_dict_keys.cqd_4_1, self.case_dict_keys.cqd_5_1_first, int)
+        key_cqd_2 = self.case_dict_keys.cqd_2
+        if np.isnan(case_dict_current[self.case_dict_keys.cqd_2]): # case_dict_current[self.case_dict_keys.cqd_2] 值存在时
+            key_cqd_2 = self.case_dict_keys.cqd_2_2
 
-        diff_dict[self.add_index.dur_cqd_54_6] = self._diff(case_dict_current, case_dict_current,
-                                                             self.case_dict_keys.cqd_5_4, self.case_dict_keys.cqd_6,
+        diff_dict[self.add_index.dur_cqd_1_2] = self._diff(case_dict_current, case_dict_current,
+                                                           self.case_dict_keys.cqd_1, key_cqd_2, int)
+
+        diff_dict[self.add_index.dur_cqd_3_31] = self._diff(case_dict_current, case_dict_current,
+                                                             self.case_dict_keys.cqd_3, self.case_dict_keys.cqd_3_1, int)
+
+        diff_dict[self.add_index.dur_cqd_31_34] = self._diff(case_dict_current, case_dict_current,
+                                                             self.case_dict_keys.cqd_3_1, self.case_dict_keys.cqd_3_4,
                                                              int)
-        diff_dict[self.add_index.dur_cqd_6_7] = self._diff(case_dict_current, case_dict_current,
-                                                           self.case_dict_keys.cqd_6,
-                                                           self.case_dict_keys.cqd_7, int)
 
+        diff_dict[self.add_index.dur_cqd_32_33] = self._diff(case_dict_current, case_dict_current,
+                                                             self.case_dict_keys.cqd_3_2, self.case_dict_keys.cqd_3_3,
+                                                             int)
+
+        diff_dict[self.add_index.dur_cqd_1_34] = self._diff(case_dict_current, case_dict_current,
+                                                           self.case_dict_keys.cqd_1, self.case_dict_keys.cqd_3_4,
+                                                           int)
+
+        diff_dict[self.add_index.dur_cqd_1_4] = self._diff(case_dict_current, case_dict_current,
+                                                            self.case_dict_keys.cqd_1, self.case_dict_keys.cqd_4,
+                                                            int)
+
+
+
+        diff_dict[self.add_index.dur_cqd_3_4] = self._diff(case_dict_current, case_dict_current,
+                                                             self.case_dict_keys.cqd_3, self.case_dict_keys.cqd_4,
+                                                             int)
+
+        diff_dict[self.add_index.gap_cqd_3] = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys.cqd_3,
+                                                         self.case_dict_keys.cqd_3, int)
+
+        diff_dict[self.add_index.gap_cqd_4] = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys.cqd_4, self.case_dict_keys.cqd_4, int)
+
+        diff_dict[self.add_index.gap_cqd_5] = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys.cqd_5,
+                                                         self.case_dict_keys.cqd_5, int)
+
+        diff_dict[self.add_index.dur_cqd_51_52] = self._diff(case_dict_current, case_dict_current,
+                                                           self.case_dict_keys.cqd_5_1_first,
+                                                           self.case_dict_keys.cqd_5_2, int)
+
+        diff_dict[self.add_index.gap_cqd_5_3] = self._diff(case_dict_pre, case_dict_current,
+                                                           self.case_dict_keys.cqd_5_3, self.case_dict_keys.cqd_5_3,
+                                                           int)
+
+        diff_dict[self.add_index.gap_cqd_6] = self._diff(case_dict_pre, case_dict_current,
+                                                           self.case_dict_keys.cqd_6, self.case_dict_keys.cqd_6,
+                                                           int)
+
+        diff_dict[self.add_index.gap_cqd_7] = self._diff(case_dict_pre, case_dict_current,
+                                                         self.case_dict_keys.cqd_7, self.case_dict_keys.cqd_7,
+                                                         int)
 
         return diff_dict
 
@@ -237,7 +323,7 @@ class Analysis(object):
 
 
 def test():
-    xls_path = '/Users/robert/Documents/doc/problemData/19_export_picture_to_video/24_grep_cqd.xls'
+
     out_path = os.path.join(os.path.dirname(xls_path), os.path.basename(xls_path).split('.')[0] + '_add_dff.xls')
     analysis = Analysis(xls_path)
     out_df = analysis.add_columns()
