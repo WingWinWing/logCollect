@@ -3,36 +3,35 @@ import pandas as pd
 import numpy as np
 import os
 
-#xls_path = '/Users/robert/Documents/doc/problemData/20_pipeline/ios/1_grep_cqd.xls'
-xls_path = '/Users/robert/Documents/doc/problemData/20_pipeline/android/8_grep_pipeline.xls'
-
-
+xls_path = '/Users/robert/Documents/doc/problemData/20_pipeline/ios/2_grep_Pipeline.xls'
+#xls_path = '/Users/robert/Documents/doc/problemData/20_pipeline/android/7_grep_cqd.xls'
+PATTERN = 'Pipeline.'
 
 class AddIndex(object):
     def __init__(self):
-        self.gap_cqd_1 = 'gap_cqd_1'
-        self.dur_cqd_1_3 = 'dur_cqd_1_3'
-        self.dur_cqd_1_2 = 'dur_cqd_1_2'
+        self.gap_cqd_1 = 'gap_1'
+        self.dur_cqd_1_3 = 'dur_1_3'
+        self.dur_cqd_1_2 = 'dur_1_2'
 
         # RenderEngne
-        self.gap_cqd_3 = 'gap_cqd.3'
-        self.dur_cqd_3_31 = 'dur_cqd.3_3.1'
+        self.gap_cqd_3 = 'gap_3'
+        self.dur_cqd_3_31 = 'dur_3_3.1'
 
-        self.dur_cqd_31_34 = 'dur_cqd_3.1_3.4'
-        self.dur_cqd_32_33 = 'dur_cqd_3.2_3.3'
-        self.dur_cqd_1_34 = 'dur_cqd_1_3.4'
-        self.dur_cqd_1_4 = 'dur_cqd_1_4'
-        self.dur_cqd_3_4 = 'dur_cqd_3_4'
-        self.gap_cqd_4 = 'gap_cqd_4'
+        self.dur_cqd_31_34 = 'dur_3.1_3.4'
+        self.dur_cqd_32_33 = 'dur_3.2_3.3'
+        self.dur_cqd_1_34 = 'dur_1_3.4'
+        self.dur_cqd_1_4 = 'dur_1_4'
+        self.dur_cqd_3_4 = 'dur_3_4'
+        self.gap_cqd_4 = 'gap_4'
 
         # Encoder
-        self.gap_cqd_5 = 'gap_cqd_5'
-        self.dur_cqd_51_52 = 'dur_cqd.5.1_5.2'
-        self.gap_cqd_5_3 = 'gap_cqd.5.3'
-        self.gap_cqd_6 = 'gap_cqd_6'
+        self.gap_cqd_5 = 'gap_5'
+        self.dur_cqd_51_52 = 'dur_5.1_5.2'
+        self.gap_cqd_5_3 = 'gap_5.3'
+        self.gap_cqd_6 = 'gap_6'
 
         # Muxer
-        self.gap_cqd_7 = 'gap_cqd_7'
+        self.gap_cqd_7 = 'gap_7'
 
 
 
@@ -120,6 +119,8 @@ class Analysis(object):
         
         
         """
+
+        self.pattern = PATTERN
         self.add_index = AddIndex()
         self.case_dict_keys = CaseDictKeys()
 
@@ -196,39 +197,30 @@ class Analysis(object):
         else:
             raise ValueError("Input must be 0 or 1.")
 
-    # def _gen_case_dict_keys(self):  # cqd.question.1 此处需要进一步理解下;
-    #     func_index_list = [['CQD.3', self._get_cqd_first], ['CQD.4', self._get_cqd_first],
-    #                        ['CQD.5.1', self._get_cqd_first], ['CQD.5.1', self._get_cqd_last],
-    #                        ['CQD.5.4', self._get_cqd_last]]
-    #     for index, func in func_index_list:
-    #         key = self._gen_case_dict_key_single(func, index)
-    #         assert key not in self.case_dict_keys
-    #         self.case_dict_keys.append(key)
-
     def _get_case_dict(self, case_df):
         case_dict = dict()
 
-        case_dict[self.case_dict_keys.cqd_1] = self._get_cqd_first(case_df, 'CQD.1')
-        case_dict[self.case_dict_keys.cqd_2] = self._get_cqd_first(case_df, 'CQD.2')
-        case_dict[self.case_dict_keys.cqd_2_1] = self._get_cqd_first(case_df, 'CQD.2.1')
-        case_dict[self.case_dict_keys.cqd_2_2] = self._get_cqd_first(case_df, 'CQD.2.2')
+        case_dict[self.case_dict_keys.cqd_1] = self._get_cqd_first(case_df,  self.pattern + '1')
+        case_dict[self.case_dict_keys.cqd_2] = self._get_cqd_first(case_df,  self.pattern + '2')
+        case_dict[self.case_dict_keys.cqd_2_1] = self._get_cqd_first(case_df,self.pattern + '2.1')
+        case_dict[self.case_dict_keys.cqd_2_2] = self._get_cqd_first(case_df,self.pattern + '2.2')
 
-        case_dict[self.case_dict_keys.cqd_3] = self._get_cqd_first(case_df, 'CQD.3')
+        case_dict[self.case_dict_keys.cqd_3] = self._get_cqd_first(case_df, self.pattern + '3')
 
-        case_dict[self.case_dict_keys.cqd_3_1] = self._get_cqd_first(case_df, 'CQD.3.1')
-        case_dict[self.case_dict_keys.cqd_3_2] = self._get_cqd_first(case_df, 'CQD.3.2')
-        case_dict[self.case_dict_keys.cqd_3_3] = self._get_cqd_first(case_df, 'CQD.3.3')
-        case_dict[self.case_dict_keys.cqd_3_4] = self._get_cqd_first(case_df, 'CQD.3.4')
+        case_dict[self.case_dict_keys.cqd_3_1] = self._get_cqd_first(case_df, self.pattern + '3.1')
+        case_dict[self.case_dict_keys.cqd_3_2] = self._get_cqd_first(case_df, self.pattern + '3.2')
+        case_dict[self.case_dict_keys.cqd_3_3] = self._get_cqd_first(case_df, self.pattern + '3.3')
+        case_dict[self.case_dict_keys.cqd_3_4] = self._get_cqd_first(case_df, self.pattern + '3.4')
 
-        case_dict[self.case_dict_keys.cqd_4] = self._get_cqd_first(case_df, 'CQD.4')
-        case_dict[self.case_dict_keys.cqd_5] = self._get_cqd_first(case_df, 'CQD.5')
+        case_dict[self.case_dict_keys.cqd_4] = self._get_cqd_first(case_df, self.pattern + '4')
+        case_dict[self.case_dict_keys.cqd_5] = self._get_cqd_first(case_df, self.pattern + '5')
 
-        case_dict[self.case_dict_keys.cqd_5_1_first] = self._get_cqd_first(case_df, 'CQD.5.1')
-        case_dict[self.case_dict_keys.cqd_5_2] = self._get_cqd_first(case_df, 'CQD.5.2')
-        case_dict[self.case_dict_keys.cqd_5_3] = self._get_cqd_first(case_df, 'CQD.5.3')
+        case_dict[self.case_dict_keys.cqd_5_1_first] = self._get_cqd_first(case_df, self.pattern + '5.1')
+        case_dict[self.case_dict_keys.cqd_5_2] = self._get_cqd_first(case_df, self.pattern + '5.2')
+        case_dict[self.case_dict_keys.cqd_5_3] = self._get_cqd_first(case_df, self.pattern + '5.3')
 
-        case_dict[self.case_dict_keys.cqd_6] = self._get_cqd_first(case_df, 'CQD.6')
-        case_dict[self.case_dict_keys.cqd_7] = self._get_cqd_first(case_df, 'CQD.7')
+        case_dict[self.case_dict_keys.cqd_6] = self._get_cqd_first(case_df, self.pattern + '6')
+        case_dict[self.case_dict_keys.cqd_7] = self._get_cqd_first(case_df, self.pattern + '7')
 
         return case_dict
 
