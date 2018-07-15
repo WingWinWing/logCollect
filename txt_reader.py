@@ -6,9 +6,10 @@ import sys
 import numpy as np
 
 
-input_file_path = '/Users/robert/Documents/doc/problemData/20_pipeline/android/7_grep_cqd.txt'
+input_file_path = '/Users/robert/Documents/doc/problemData/26_图片导出卡死/14_grep_pipeline.txt'
 
-temp_list = ['1',
+temp_list = [
+             '1',
              '2', '2.1', '2.2',
              '3', '3.1', '3.2', '3.3', '3.4',
              '4',
@@ -20,7 +21,7 @@ temp_list = ['1',
 
 ANDROID_PLATFORM = 'android'
 IOS_PLATFORM = 'ios'
-PATTERN = "CQD"
+PATTERN = "Pipeline"
 
 platform = ANDROID_PLATFORM
 
@@ -30,6 +31,7 @@ class TxtReader(object):
         self.f = open(txt_path, 'rb')
         self.patten = PATTERN
         self.key_list = map(self._format_func, temp_list)
+        self.vid_key = 'nan'
 
     def _format_func(self, string):
         return self.patten + '.' + string
@@ -38,6 +40,7 @@ class TxtReader(object):
         self.f.close()
 
     def _get_pts(self, line):
+        # print "line = {}".format(line)
         split_comma_list = line.split(',')
         for item in split_comma_list:
             if 'pts =' in item:
@@ -46,6 +49,17 @@ class TxtReader(object):
             else:
                 continue
         return None
+
+    def _get_vid(self, line):
+        # print "line = {}".format(line)
+        split_comma_list = line.split(',')
+        for item in split_comma_list:
+            if 'vid =' in item:
+                item = item.replace('.', '')
+                return int(item.split('vid =')[-1])
+            else:
+                continue
+        return self.vid_key
 
     def _get_cqd(self, line):
         split_comma_list = re.split(r"\,|\ ", line)  # 将字符串以"," 或 “空格” 分割;
@@ -67,6 +81,7 @@ class TxtReader(object):
         :return:
         """
         assert isinstance(time, str)
+        #print "time = {}".format(time)
         time_split = re.split(r"\:|\.", time)
         time_multiple = [60 * 1000, 1000, 1]
         ms_time = 0
@@ -86,6 +101,7 @@ class TxtReader(object):
             pts = self._get_pts(line)  # 获取 pts = 后面的值;
             cqd = self._get_cqd(line)  # 获取 以 "," 或 “空格”分割后的字符串的，包含有 “CQD” 的字符串;
             time = self._get_time(line)  # 获取当前行中时间戳，转换成 ms 为单位;
+            vid = self._get_vid(line)
 
             if cqd is None:
                 warnings.warn("line {} {} cqd is None.".format(i, line))
@@ -96,11 +112,16 @@ class TxtReader(object):
             elif time is None:
                 warnings.warn("line {} {} time is None.".format(i, line))
                 continue
+
             if not pts_result.has_key(pts):
-                pts_result[pts] = [cqd, time]
+                assert vid is not None  # when pts output first, vid must not be None.
+                pts_result[pts] = {vid: [cqd, time]}
             else:
-                pts_result[pts].append(cqd)
-                pts_result[pts].append(time)
+                if pts_result[pts].has_key(vid):
+                    pts_result[pts][vid].extend([cqd, time])
+                    # pts_result[pts].append(time)
+                else:
+                    pts_result[pts][vid] = [cqd, time]
         return pts_result
 
     def _init_cqd_count(self):
@@ -116,22 +137,29 @@ class TxtReader(object):
 
         items = pts_result.items()
         items.sort()
-        head = ['pts'] + self.key_list
+        head = ['pts'] + ['vid'] + self.key_list
         df = pd.DataFrame(columns=head)
-        for k, v in items:
+
+
+        for pts, vid_dict in items:
             cqd_item_count_dict = self._init_cqd_count()
             pts_df = pd.DataFrame([[np.nan] * len(head)] * upper_limit, columns=head)
             line_index = 0
             #        print v
-            for ind in range(len(v) / 2):
-                item = v[ind * 2]
-                max_count = max(cqd_item_count_dict.values())
+            for k, v in vid_dict.items():
+                for ind in range(len(v) / 2):
+                    item = v[ind * 2]
+                    max_count = max(cqd_item_count_dict.values())
 
-                cqd_item_count_dict[item] += 1
-                if cqd_item_count_dict[item] > max_count > 0:
-                    line_index += 1
-                pts_df.iloc[line_index, 0] = k
-                pts_df.loc[line_index, item] = v[ind * 2 + 1]
+                    cqd_item_count_dict[item] += 1
+                    if cqd_item_count_dict[item] > max_count > 0:
+                        line_index += 1
+                    pts_df.iloc[line_index, 0] = pts      # 根据行号，列号设置单元格的值 pts;
+                    if k != 'nan':
+                        pts_df.iloc[line_index, 1] = k
+                    else:
+                        pts_df.iloc[line_index, 1] = np.nan
+                    pts_df.loc[line_index, item] = v[ind * 2 + 1]   # 通过行号与列的字符串来设置单元做的值;
             df = df.append(pts_df.dropna(axis=0, how='all'), ignore_index=True)
         df.to_excel(output_path, header=True, index=False)
 
