@@ -7,7 +7,7 @@ import numpy as np
 import collections
 
 
-input_file_path = '/Users/robert/Documents/doc/problemData/26_图片导出卡死/16_grep_pipeline.txt'
+input_file_path = '/Users/robert/Documents/doc/problemData/26_图片导出卡死/31_grep_pipeline.txt'
 
 temp_list = [
              '1', '1.1',
@@ -89,7 +89,10 @@ class TxtReader(object):
         for i, item in enumerate(time_split):
             if i == 0:
                 continue
-            ms_time += int(item) * time_multiple[i - 1]
+            try:
+                ms_time += int(item) * time_multiple[i - 1]
+            except:
+                raise TypeError("{} must be convert to int type".format(item))
         return ms_time
 
     def _gen_result(self):
