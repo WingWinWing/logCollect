@@ -7,7 +7,7 @@ import numpy as np
 import collections
 
 
-input_file_path = '/Users/robert/Documents/doc/problemData/26_图片导出卡死/31_grep_pipeline.txt'
+input_file_path = '/Users/robert/Documents/doc/problemData/26_图片导出卡死/ZHS_16_grep_pipeline.txt'
 
 temp_list = [
              '1', '1.1',
@@ -102,6 +102,10 @@ class TxtReader(object):
         """
         pts_result = {}
         for i, line in enumerate(self.f.readlines()):
+            line = line.strip()
+            if not len(line):
+                continue
+
             pts = self._get_pts(line)  # 获取 pts = 后面的值;
             cqd = self._get_cqd(line)  # 获取 以 "," 或 “空格”分割后的字符串的，包含有 “CQD” 的字符串;
             time = self._get_time(line)  # 获取当前行中时间戳，转换成 ms 为单位;
@@ -180,6 +184,7 @@ class AndriodTxtReader(TxtReader):
 
     def _get_time(self, line):
         super(AndriodTxtReader, self)._get_time(line)
+        # print "line = {}".format(line)
         complete_time = line.split(' ')[1]
         ms_time = self._time_transform(complete_time)
         return ms_time
