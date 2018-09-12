@@ -7,7 +7,10 @@ import numpy as np
 import collections
 
 
-input_file_path = '/Users/robert/Documents/doc/problemData/26_图片导出卡死/ZHS_16_grep_pipeline.txt'
+# input_file_path = '/Users/robert/Documents/doc/problemData/26_图片导出卡死/ZHS_16_grep_pipeline.txt'    # 后面测试下，看下为什么那几个没有进入对应的表格中;
+# input_file_path = '/Users/robert/Documents/doc/problemData/34_tencent/1_grep_pipeline.txt'
+input_file_path = '/Users/robert/Documents/doc/problemData/48_快看卡住/5_grep_Pipeline.txt';
+
 
 temp_list = [
              '1', '1.1',
@@ -57,7 +60,10 @@ class TxtReader(object):
         for item in split_comma_list:
             if 'vid =' in item:
                 item = item.replace('.', '')
-                return int(item.split('vid =')[-1])
+                try:
+                    return int(item.split('vid =')[-1])
+                except:
+                    raise TypeError("line = {}, must be convert to int type".format(line))
             else:
                 continue
         return self.vid_key
