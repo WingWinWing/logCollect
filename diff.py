@@ -3,9 +3,11 @@ import pandas as pd
 import numpy as np
 import os
 
-xls_path = '/Users/robert/Documents/doc/problemData/20_pipeline/ios/2_grep_Pipeline.xls'
-#xls_path = '/Users/robert/Documents/doc/problemData/20_pipeline/android/7_grep_cqd.xls'
+xls_path = '/Users/robert/Documents/doc/problemData/53_v370_costTime/1_grep_pipeline.xls'
+#xls_path = '/Users/robert/Documents/doc/problemData/20_pipeline/ios/7_grep_Pipeline.xls'
 PATTERN = 'Pipeline.'
+
+
 
 class AddIndex(object):
     def __init__(self):
@@ -224,9 +226,9 @@ class Analysis(object):
 
         return case_dict
 
-    @staticmethod
-    def _diff(case_dict_pre, case_dict_current, index_pre, index_current, dtype_func):
-        if np.isnan(case_dict_pre[index_pre]) or np.isnan(case_dict_current[index_current]):
+    # @staticmethod
+    def _diff(self, case_dict_pre, case_dict_current, index_pre, index_current, dtype_func):
+        if np.isnan(float(case_dict_pre[index_pre])) or np.isnan(float(case_dict_current[index_current])):
             return np.nan
         else:
             return dtype_func(case_dict_current[index_current]) - dtype_func(case_dict_pre[index_pre])
@@ -315,7 +317,6 @@ class Analysis(object):
 
 
 def test():
-
     out_path = os.path.join(os.path.dirname(xls_path), os.path.basename(xls_path).split('.')[0] + '_add_dff.xls')
     analysis = Analysis(xls_path)
     out_df = analysis.add_columns()
