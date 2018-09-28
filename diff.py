@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 
-xls_path = '/Users/robert/Documents/doc/problemData/53_v370_costTime/1_grep_pipeline.xls'
+xls_path = '/Users/robert/Documents/doc/problemData/53_v370_costTime/20180928/3_grep_Pipeline.xls'
 #xls_path = '/Users/robert/Documents/doc/problemData/20_pipeline/ios/7_grep_Pipeline.xls'
 PATTERN = 'Pipeline.'
 
@@ -209,20 +209,20 @@ class Analysis(object):
 
         case_dict[self.case_dict_keys.cqd_3] = self._get_cqd_first(case_df, self.pattern + '3')
 
-        case_dict[self.case_dict_keys.cqd_3_1] = self._get_cqd_first(case_df, self.pattern + '3.1')
-        case_dict[self.case_dict_keys.cqd_3_2] = self._get_cqd_first(case_df, self.pattern + '3.2')
-        case_dict[self.case_dict_keys.cqd_3_3] = self._get_cqd_first(case_df, self.pattern + '3.3')
-        case_dict[self.case_dict_keys.cqd_3_4] = self._get_cqd_first(case_df, self.pattern + '3.4')
+        case_dict[self.case_dict_keys.cqd_3_1] = self._get_cqd_last(case_df, self.pattern + '3.1')
+        case_dict[self.case_dict_keys.cqd_3_2] = self._get_cqd_last(case_df, self.pattern + '3.2')
+        case_dict[self.case_dict_keys.cqd_3_3] = self._get_cqd_last(case_df, self.pattern + '3.3')
+        case_dict[self.case_dict_keys.cqd_3_4] = self._get_cqd_last(case_df, self.pattern + '3.4')
 
-        case_dict[self.case_dict_keys.cqd_4] = self._get_cqd_first(case_df, self.pattern + '4')
-        case_dict[self.case_dict_keys.cqd_5] = self._get_cqd_first(case_df, self.pattern + '5')
+        case_dict[self.case_dict_keys.cqd_4] = self._get_cqd_last(case_df, self.pattern + '4')
+        case_dict[self.case_dict_keys.cqd_5] = self._get_cqd_last(case_df, self.pattern + '5')
 
         case_dict[self.case_dict_keys.cqd_5_1_first] = self._get_cqd_first(case_df, self.pattern + '5.1')
         case_dict[self.case_dict_keys.cqd_5_2] = self._get_cqd_first(case_df, self.pattern + '5.2')
         case_dict[self.case_dict_keys.cqd_5_3] = self._get_cqd_first(case_df, self.pattern + '5.3')
 
-        case_dict[self.case_dict_keys.cqd_6] = self._get_cqd_first(case_df, self.pattern + '6')
-        case_dict[self.case_dict_keys.cqd_7] = self._get_cqd_first(case_df, self.pattern + '7')
+        case_dict[self.case_dict_keys.cqd_6] = self._get_cqd_last(case_df, self.pattern + '6')
+        case_dict[self.case_dict_keys.cqd_7] = self._get_cqd_last(case_df, self.pattern + '7')
 
         return case_dict
 
