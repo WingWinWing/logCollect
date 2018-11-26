@@ -9,10 +9,10 @@ import collections
 
 # input_file_path = '/Users/robert/Documents/doc/problemData/26_图片导出卡死/ZHS_16_grep_pipeline.txt'    # 后面测试下，看下为什么那几个没有进入对应的表格中;
 # input_file_path = '/Users/robert/Documents/doc/problemData/34_tencent/1_grep_pipeline.txt'
-input_file_path = '/Users/robert/Documents/doc/problemData/87_Tecno_framerate/2_grep_Pipeline.txt'
+input_file_path = '/Users/robert/Documents/doc/problemData/87_Tecno_framerate/20181126/8_grep_pipeline.txt'
 
 
-temp_list = [
+temp_list = ['0',
              '1', '1.1','1.2','1.3', '1.4',
              '2',
              '3',

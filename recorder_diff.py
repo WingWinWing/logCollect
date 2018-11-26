@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 
-xls_path = '/Users/robert/Documents/doc/problemData/87_Tecno_framerate/2_grep_Pipeline.xls'
+xls_path = '/Users/robert/Documents/doc/problemData/87_Tecno_framerate/20181126/8_grep_pipeline.xls'
 #xls_path = '/Users/robert/Documents/doc/problemData/20_pipeline/ios/7_grep_Pipeline.xls'
 PATTERN = 'Pipeline.'
 
@@ -17,33 +17,47 @@ ReadMe:
 
 class CaseDictKeys(object):
     def __init__(self):
+        self.pipeline_0     = 'pipeline_0'
         self.pipeline_1     = 'pipeline_1'
-        self.pipeline_2     = 'pipeline_2'
         self.pipeline_1_1   = 'pipeline_1_1'
         self.pipeline_1_2   = 'pipeline_1_2'
         self.pipeline_1_3   = 'pipeline_1_3'
         self.pipeline_1_4   = 'pipeline_1_4'
+        self.pipeline_2     = 'pipeline_2'
+        self.pipeline_3     = 'pipeline_3'
+        self.pipeline_4     = 'pipeline_4'
 
 """
 待新增的统计项在 excel 中每列的表头
 """
 class AddIndex(object):
     def __init__(self):
-        self.gap_1     = 'gap_1'
-        self.dur_1_2   = 'dur_1_2'
-        self.dur_11_12 = 'dur_1.1_1.2'
-        self.dur_12_13 = 'dur_1.2_1.3'
-        self.dur_13_14 = 'dur_1.3_1.4'
+        self.gap_0      = 'gap_0'
+        self.gap_1      = 'gap_1'
+
+        self.dur_0_1    = 'dur_0_1'
+
+        self.dur_1_2    = 'dur_1_2'
+        self.dur_11_12  = 'dur_1.1_1.2'
+        self.dur_12_13  = 'dur_1.2_1.3'
+        self.dur_13_14  = 'dur_1.3_1.4'
+
+        self.dur_2_3 = 'dur_2_3'
+        self.dur_3_4 = 'dur_3_4'
 
 
 
     def tolist(self):
         return [
+                self.gap_0,
                 self.gap_1,
+                self.dur_0_1,
                 self.dur_1_2,
                 self.dur_11_12,
                 self.dur_12_13,
-                self.dur_13_14
+                self.dur_13_14,
+                self.dur_2_3,
+                self.dur_3_4
                 ]
 
     def _check(self, index_list):
@@ -64,8 +78,12 @@ class AddIndex(object):
     def get_values_from_dict(self, input_dict):
         values = []
         for k in self.tolist():
-            assert k in input_dict.keys()
-            values.append(input_dict[k])
+            try:
+                k in input_dict.keys()
+                values.append(input_dict[k])
+            except AssertionError:
+                raise TypeError("k = {}, input_dict = {}, must be convert to int type".format(k, input_dict))
+
         return values
 
 
@@ -77,17 +95,6 @@ class AddIndex(object):
 class Analysis(object):
     def __init__(self, xls_path):
         self.df = pd.read_excel(xls_path)
-        """
-        self.add_index = ['gap_cqd.3', 'gap_cqd.4', 'dur_cqd.3_4', 'gap_cqd.5.1', 'gap_cqd.5.4', 'dur_cqd.4_5.1','dur_cqd_3_1']
-        gap_cqd.3 :  表示前后相邻两帧, cqd.3 位置处的时间戳的差值, 表示 RenderEngine 接收数据的时间间隔;
-        gap_cqd.4 :  表示前后相邻两帧, cqd.4 位置处的时间戳的差值，表示 RenderEngine 发送数据的时间间隔;
-        dur_cqd.3_4: 表示同一帧 cqd.4 - cqd.3， 表示 RenderEngine 接收一帧到 发送渲染后帧至Encoder 的时间间隔;
-        gap_cqd.5.1：表示 “当前帧 Encoder 成功输出一帧对应送入数据的时间戳” 减去 “上一帧第一次遍历输入帧的时间戳” 的差值;
-        gar_cqd.5.4: 表示 Encoder 编码器吐出前后两帧数据的时间间隔;
-        dur_cqd.4_5.1: “当前帧第一次接收到 RenderEngine 发送过来的数据的时间戳” 减去 “RenderEngine 发送时间的时间戳”, 表示 RenderEninge 发送的待编码帧在消息队列中耗费的时间;
-        
-        
-        """
 
         self.pattern = PATTERN
         self.add_index = AddIndex()
@@ -166,15 +173,23 @@ class Analysis(object):
         else:
             raise ValueError("Input must be 0 or 1.")
 
+    """"
+    获取具体某行中对应列的值
+    """
     def _get_case_dict(self, case_df):
         case_dict = dict()
 
+        case_dict[self.case_dict_keys.pipeline_0] = self._get_cqd_first(case_df, self.pattern + '0')
         case_dict[self.case_dict_keys.pipeline_1] = self._get_cqd_first(case_df,  self.pattern + '1')
         case_dict[self.case_dict_keys.pipeline_2] = self._get_cqd_first(case_df,  self.pattern + '2')
         case_dict[self.case_dict_keys.pipeline_1_1] = self._get_cqd_first(case_df,self.pattern + '1.1')
         case_dict[self.case_dict_keys.pipeline_1_2] = self._get_cqd_first(case_df,self.pattern + '1.2')
         case_dict[self.case_dict_keys.pipeline_1_3] = self._get_cqd_first(case_df, self.pattern + '1.3')
         case_dict[self.case_dict_keys.pipeline_1_4] = self._get_cqd_first(case_df, self.pattern + '1.4')
+
+        case_dict[self.case_dict_keys.pipeline_3] = self._get_cqd_first(case_df, self.pattern + '3')
+        case_dict[self.case_dict_keys.pipeline_4] = self._get_cqd_first(case_df, self.pattern + '3')
+
 
         return case_dict
 
@@ -187,11 +202,22 @@ class Analysis(object):
 
     def _diff_items(self, case_dict_pre, case_dict_current):
         diff_dict = dict()
-        diff_dict[self.add_index.gap_1] = self._diff(case_dict_pre, case_dict_current, self.case_dict_keys.pipeline_1,
-                                                         self.case_dict_keys.pipeline_1, int)
+
+        diff_dict[self.add_index.gap_0] = self._diff(case_dict_pre, case_dict_current,
+                                                     self.case_dict_keys.pipeline_0,
+                                                     self.case_dict_keys.pipeline_0, int)
+
+        diff_dict[self.add_index.gap_1] = self._diff(case_dict_pre, case_dict_current,
+                                                     self.case_dict_keys.pipeline_1,
+                                                    self.case_dict_keys.pipeline_1, int)
+
+        diff_dict[self.add_index.dur_0_1] = self._diff(case_dict_current, case_dict_current,
+                                                       self.case_dict_keys.pipeline_0,
+                                                       self.case_dict_keys.pipeline_1, int)
 
         diff_dict[self.add_index.dur_1_2] = self._diff(case_dict_current, case_dict_current,
-                                                       self.case_dict_keys.pipeline_1, self.case_dict_keys.pipeline_2, int)
+                                                       self.case_dict_keys.pipeline_1,
+                                                       self.case_dict_keys.pipeline_2, int)
 
         # key_cqd_2 = self.case_dict_keys.cqd_2
         # if np.isnan(case_dict_current[self.case_dict_keys.cqd_2]): # case_dict_current[self.case_dict_keys.cqd_2] 值存在时
@@ -208,6 +234,15 @@ class Analysis(object):
         diff_dict[self.add_index.dur_13_14] = self._diff(case_dict_current, case_dict_current,
                                                          self.case_dict_keys.pipeline_1_3,
                                                          self.case_dict_keys.pipeline_1_4, int)
+
+        diff_dict[self.add_index.dur_2_3] = self._diff(case_dict_current, case_dict_current,
+                                                       self.case_dict_keys.pipeline_2,
+                                                       self.case_dict_keys.pipeline_3, int)
+
+        diff_dict[self.add_index.dur_3_4] = self._diff(case_dict_current, case_dict_current,
+                                                       self.case_dict_keys.pipeline_3,
+                                                       self.case_dict_keys.pipeline_4, int)
+
 
         return diff_dict
 
