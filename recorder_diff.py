@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 
-xls_path = '/Users/robert/Documents/doc/problemData/87_Tecno_framerate/20181126/8_grep_pipeline.xls'
+xls_path = '/Users/robert/Documents/doc/problemData/87_Tecno_framerate/20181127_recorder_encoder/3_grep_pipeline.xls'
 #xls_path = '/Users/robert/Documents/doc/problemData/20_pipeline/ios/7_grep_Pipeline.xls'
 PATTERN = 'Pipeline.'
 
@@ -21,6 +21,15 @@ class CaseDictKeys(object):
         self.pipeline_1     = 'pipeline_1'
         self.pipeline_1_1   = 'pipeline_1_1'
         self.pipeline_1_2   = 'pipeline_1_2'
+        self.pipeline_1_2_1 = 'pipeline_1_2_1'
+
+        self.pipeline_1_2_1_1 = 'pipeline_1_2_1_1'
+        self.pipeline_1_2_1_2 = 'pipeline_1_2_1_2'
+        self.pipeline_1_2_1_3 = 'pipeline_1_2_1_3'
+
+
+        self.pipeline_1_2_2 = 'pipeline_1_2_2'
+
         self.pipeline_1_3   = 'pipeline_1_3'
         self.pipeline_1_4   = 'pipeline_1_4'
         self.pipeline_2     = 'pipeline_2'
@@ -40,6 +49,12 @@ class AddIndex(object):
         self.dur_1_2    = 'dur_1_2'
         self.dur_11_12  = 'dur_1.1_1.2'
         self.dur_12_13  = 'dur_1.2_1.3'
+        self.dur_121_122 = 'dur_1.2.1_1.2.2'
+
+        self.dur_1211_1212 = 'dur_1.2.1.1_1.2.1.2'
+        self.dur_1212_1213 = 'dur_1.2.1.2_1.2.1.3'
+
+
         self.dur_13_14  = 'dur_1.3_1.4'
 
         self.dur_2_3 = 'dur_2_3'
@@ -54,6 +69,9 @@ class AddIndex(object):
                 self.dur_0_1,
                 self.dur_1_2,
                 self.dur_11_12,
+                self.dur_121_122,
+                self.dur_1211_1212,
+                self.dur_1212_1213,
                 self.dur_12_13,
                 self.dur_13_14,
                 self.dur_2_3,
@@ -184,6 +202,16 @@ class Analysis(object):
         case_dict[self.case_dict_keys.pipeline_2] = self._get_cqd_first(case_df,  self.pattern + '2')
         case_dict[self.case_dict_keys.pipeline_1_1] = self._get_cqd_first(case_df,self.pattern + '1.1')
         case_dict[self.case_dict_keys.pipeline_1_2] = self._get_cqd_first(case_df,self.pattern + '1.2')
+
+        case_dict[self.case_dict_keys.pipeline_1_2_1] = self._get_cqd_first(case_df, self.pattern + '1.2.1')
+
+        case_dict[self.case_dict_keys.pipeline_1_2_1_1] = self._get_cqd_first(case_df, self.pattern + '1.2.1.1')
+        case_dict[self.case_dict_keys.pipeline_1_2_1_2] = self._get_cqd_first(case_df, self.pattern + '1.2.1.2')
+        case_dict[self.case_dict_keys.pipeline_1_2_1_3] = self._get_cqd_first(case_df, self.pattern + '1.2.1.3')
+
+
+        case_dict[self.case_dict_keys.pipeline_1_2_2] = self._get_cqd_first(case_df, self.pattern + '1.2.2')
+
         case_dict[self.case_dict_keys.pipeline_1_3] = self._get_cqd_first(case_df, self.pattern + '1.3')
         case_dict[self.case_dict_keys.pipeline_1_4] = self._get_cqd_first(case_df, self.pattern + '1.4')
 
@@ -226,6 +254,20 @@ class Analysis(object):
         diff_dict[self.add_index.dur_11_12] = self._diff(case_dict_current, case_dict_current,
                                                             self.case_dict_keys.pipeline_1_1,
                                                             self.case_dict_keys.pipeline_1_2, int)
+
+        diff_dict[self.add_index.dur_121_122] = self._diff(case_dict_current, case_dict_current,
+                                                         self.case_dict_keys.pipeline_1_2_1,
+                                                         self.case_dict_keys.pipeline_1_2_2, int)
+
+        diff_dict[self.add_index.dur_1211_1212] = self._diff(case_dict_current, case_dict_current,
+                                                           self.case_dict_keys.pipeline_1_2_1_1,
+                                                           self.case_dict_keys.pipeline_1_2_1_2, int)
+
+        diff_dict[self.add_index.dur_1212_1213] = self._diff(case_dict_current, case_dict_current,
+                                                             self.case_dict_keys.pipeline_1_2_1_2,
+                                                             self.case_dict_keys.pipeline_1_2_1_3, int)
+
+
 
         diff_dict[self.add_index.dur_12_13] = self._diff(case_dict_current, case_dict_current,
                                                              self.case_dict_keys.pipeline_1_2,

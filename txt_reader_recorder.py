@@ -9,11 +9,13 @@ import collections
 
 # input_file_path = '/Users/robert/Documents/doc/problemData/26_图片导出卡死/ZHS_16_grep_pipeline.txt'    # 后面测试下，看下为什么那几个没有进入对应的表格中;
 # input_file_path = '/Users/robert/Documents/doc/problemData/34_tencent/1_grep_pipeline.txt'
-input_file_path = '/Users/robert/Documents/doc/problemData/87_Tecno_framerate/20181126/8_grep_pipeline.txt'
+input_file_path = '/Users/robert/Documents/doc/problemData/87_Tecno_framerate/20181127_recorder_encoder/3_grep_pipeline.txt'
 
 
 temp_list = ['0',
-             '1', '1.1','1.2','1.3', '1.4',
+             '1', '1.1','1.2', '1.2.1',
+             '1.2.1.1', '1.2.1.2', '1.2.1.3',
+             '1.2.2', '1.3', '1.4',
              '2',
              '3',
              '4']
@@ -139,6 +141,10 @@ class TxtReader(object):
         :return:
         """
         pts_result = {}
+        begin_item_without_pts = False
+        cur_pts = -1
+
+        item_without_pts = ["Pipeline.1.2.1.1", "Pipeline.1.2.1.2", "Pipeline.1.2.1.3"]
         for i, line in enumerate(self.f.readlines()):
             line = line.strip()
             if not len(line):
@@ -146,13 +152,27 @@ class TxtReader(object):
 
             pts = self._get_value_by_patten(line, 'mTimeOffset =' )  # 获取 pts = 后面的值;
             key_item = self._get_key_item(line)  # 获取 以 "," 或 “空格”分割后的字符串的，包含有 “CQD” 的字符串;
+
+            if key_item == "Pipeline.1":
+                begin_item_without_pts = True
+                cur_pts = pts
+
+            if key_item == "Pipeline.2":
+                begin_item_without_pts = False
+                cur_pts = -1
+
+            if begin_item_without_pts == True:
+                if key_item in item_without_pts:
+                    pts = cur_pts
+
+
             time = self._get_time(line)  # 获取当前行中时间戳，转换成 ms 为单位;
             vid = self._get_vid(line)
 
             if key_item is None:
                 warnings.warn("line {} {} cqd is None.".format(i, line))
                 continue
-            elif pts is None:
+            elif pts is None and begin_item_without_pts  == False:
                 warnings.warn("line {} {} pts is None.".format(i, line))
                 continue
             elif time is None:
