@@ -9,7 +9,7 @@ import collections
 
 # input_file_path = '/Users/robert/Documents/doc/problemData/26_图片导出卡死/ZHS_16_grep_pipeline.txt'    # 后面测试下，看下为什么那几个没有进入对应的表格中;
 # input_file_path = '/Users/robert/Documents/doc/problemData/34_tencent/1_grep_pipeline.txt'
-input_file_path = '/Users/robert/Documents/doc/problemData/87_Tecno_framerate/20181127_recorder_encoder/3_grep_pipeline.txt'
+input_file_path = '/Users/robert/Documents/doc/problemData/87_Tecno_framerate/20181201/1_grep_pipeline.txt'
 
 
 temp_list = ['0',
@@ -17,8 +17,7 @@ temp_list = ['0',
              '1.2.1.1', '1.2.1.2', '1.2.1.3',
              '1.2.2', '1.3', '1.4',
              '2',
-             '3',
-             '4']
+             '3']
 
 
 ANDROID_PLATFORM = 'android'

@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 import os
 
-xls_path = '/Users/robert/Documents/doc/problemData/87_Tecno_framerate/20181127_recorder_encoder/3_grep_pipeline.xls'
+xls_path = '/Users/robert/Documents/doc/problemData/87_Tecno_framerate/20181201/1_grep_pipeline.xls'
 #xls_path = '/Users/robert/Documents/doc/problemData/20_pipeline/ios/7_grep_Pipeline.xls'
 PATTERN = 'Pipeline.'
 
@@ -34,7 +34,6 @@ class CaseDictKeys(object):
         self.pipeline_1_4   = 'pipeline_1_4'
         self.pipeline_2     = 'pipeline_2'
         self.pipeline_3     = 'pipeline_3'
-        self.pipeline_4     = 'pipeline_4'
 
 """
 待新增的统计项在 excel 中每列的表头
@@ -58,7 +57,6 @@ class AddIndex(object):
         self.dur_13_14  = 'dur_1.3_1.4'
 
         self.dur_2_3 = 'dur_2_3'
-        self.dur_3_4 = 'dur_3_4'
 
 
 
@@ -74,8 +72,7 @@ class AddIndex(object):
                 self.dur_1212_1213,
                 self.dur_12_13,
                 self.dur_13_14,
-                self.dur_2_3,
-                self.dur_3_4
+                self.dur_2_3
                 ]
 
     def _check(self, index_list):
@@ -216,7 +213,6 @@ class Analysis(object):
         case_dict[self.case_dict_keys.pipeline_1_4] = self._get_cqd_first(case_df, self.pattern + '1.4')
 
         case_dict[self.case_dict_keys.pipeline_3] = self._get_cqd_first(case_df, self.pattern + '3')
-        case_dict[self.case_dict_keys.pipeline_4] = self._get_cqd_first(case_df, self.pattern + '3')
 
 
         return case_dict
@@ -280,10 +276,6 @@ class Analysis(object):
         diff_dict[self.add_index.dur_2_3] = self._diff(case_dict_current, case_dict_current,
                                                        self.case_dict_keys.pipeline_2,
                                                        self.case_dict_keys.pipeline_3, int)
-
-        diff_dict[self.add_index.dur_3_4] = self._diff(case_dict_current, case_dict_current,
-                                                       self.case_dict_keys.pipeline_3,
-                                                       self.case_dict_keys.pipeline_4, int)
 
 
         return diff_dict
